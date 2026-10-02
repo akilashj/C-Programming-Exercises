@@ -1,0 +1,6 @@
+run ipconfig on both laptops and paste the results.
+fix the routing so the ping to server0 or the internet works.
+do the counter test from the as_71 laptop.
+show interfaces fa0/5 | include packets
+show interfaces fa0/6 | include packets
+show mac address-table interface fa0/7
