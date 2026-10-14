@@ -8,6 +8,9 @@
 #define MAX_SUBJECTS 50
 #define NAME_SIZE 64
 
+#define COLOR_RESET  "\033[0m"
+#define COLOR_CYAN   "\033[1;36m"
+
 typedef struct {
     char name[NAME_SIZE];
     int score;
@@ -15,6 +18,6 @@ typedef struct {
 } Subject;
 
 int main(void) {
-    printf("Welcome to the Student Grade Calculator!%s\n", COLOR_CYAN);
+    printf("%sWelcome to the Student Grade Calculator!%s\n", COLOR_CYAN,COLOR_RESET);
     return 0;
 }
