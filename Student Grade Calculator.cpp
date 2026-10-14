@@ -15,6 +15,6 @@ typedef struct {
 } Subject;
 
 int main(void) {
-    printf("Welcome to the Student Grade Calculator!\n");
+    printf("Welcome to the Student Grade Calculator!%s\n", COLOR_CYAN);
     return 0;
 }
