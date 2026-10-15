@@ -21,15 +21,31 @@ typedef struct {
     int grade;
 } Subject;
 
+
+int calculate_grade(int score);
+const char* get_performance_status(double avg);
 int read_int(const char *prompt, int min, int max);
 
 int main(void) {
     printf("%sWelcome to the Student Grade Calculator!%s\n", COLOR_CYAN, COLOR_RESET);
-
-    int count = read_int("How many subjects do you want to calculate grades for? ", 1, MAX_SUBJECTS);
-    printf("Configured for %d subjects.\n", count);
-
     return 0;
+}
+
+int calculate_grade(int score) {
+    if (score >= 90) return 5;
+    if (score >= 80) return 4;
+    if (score >= 70) return 3;
+    if (score >= 60) return 2;
+    if (score >= 50) return 1;
+    return 0;
+}
+
+const char* get_performance_status(double avg) {
+    if (avg >= 4.5) return "EXCELLENT (Honors List)";
+    if (avg >= 3.5) return "VERY GOOD";
+    if (avg >= 2.5) return "GOOD";
+    if (avg >= 1.0) return "PASS";
+    return "NEEDS IMPROVEMENT";
 }
 
 int read_int(const char *prompt, int min, int max) {
