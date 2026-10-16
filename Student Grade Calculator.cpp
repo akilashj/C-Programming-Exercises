@@ -21,13 +21,36 @@ typedef struct {
     int grade;
 } Subject;
 
-
+// Function prototypes
 int calculate_grade(int score);
 const char* get_performance_status(double avg);
 int read_int(const char *prompt, int min, int max);
 
 int main(void) {
+    char student_name[NAME_SIZE];
+    Subject subjects[MAX_SUBJECTS];
+
     printf("%sWelcome to the Student Grade Calculator!%s\n", COLOR_CYAN, COLOR_RESET);
+    printf("Please enter your name: ");
+    if (fgets(student_name, sizeof(student_name), stdin) != NULL) {
+        student_name[strcspn(student_name, "\n")] = '\0';
+    }
+
+    int subject_count = read_int("How many subjects do you want to calculate grades for? ", 1, MAX_SUBJECTS);
+
+    double total_grade_points = 0;
+    for (int i = 0; i < subject_count; i++) {
+        printf("\nEnter subject %d name: ", i + 1);
+        fgets(subjects[i].name, sizeof(subjects[i].name), stdin);
+        subjects[i].name[strcspn(subjects[i].name, "\n")] = '\0';
+
+        subjects[i].score = read_int("Enter score (0-100): ", 0, 100);
+        subjects[i].grade = calculate_grade(subjects[i].score);
+        total_grade_points += subjects[i].grade;
+    }
+
+    double average_grade = total_grade_points / subject_count;
+
     return 0;
 }
 
