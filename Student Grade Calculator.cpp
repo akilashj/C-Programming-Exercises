@@ -8,6 +8,7 @@
 #define MAX_SUBJECTS 50
 #define NAME_SIZE 64
 
+
 #define COLOR_RESET  "\033[0m"
 #define COLOR_RED    "\033[1;31m"
 #define COLOR_GREEN  "\033[1;32m"
@@ -21,10 +22,12 @@ typedef struct {
     int grade;
 } Subject;
 
-// Function prototypes
+
 int calculate_grade(int score);
 const char* get_performance_status(double avg);
 int read_int(const char *prompt, int min, int max);
+void print_score_bar(FILE *stream, int score);
+void print_report(FILE *stream, const char *student_name, const Subject *subjects, int count, double avg, int use_colors);
 
 int main(void) {
     char student_name[NAME_SIZE];
@@ -50,6 +53,19 @@ int main(void) {
     }
 
     double average_grade = total_grade_points / subject_count;
+
+
+    print_report(stdout, student_name, subjects, subject_count, average_grade, 1);
+
+
+    FILE *file = fopen("grade_report.txt", "w");
+    if (file != NULL) {
+        print_report(file, student_name, subjects, subject_count, average_grade, 0);
+        fclose(file);
+        printf("\n%sReport successfully saved to 'grade_report.txt'.%s\n", COLOR_GREEN, COLOR_RESET);
+    } else {
+        fprintf(stderr, "%sError: Could not open file for writing.%s\n", COLOR_RED, COLOR_RESET);
+    }
 
     return 0;
 }
@@ -83,4 +99,52 @@ int read_int(const char *prompt, int min, int max) {
         }
         printf("%sInvalid input! Please enter a number between %d and %d.%s\n", COLOR_RED, min, max, COLOR_RESET);
     }
+}
+
+void print_score_bar(FILE *stream, int score) {
+    int filled = score / 10;
+    fprintf(stream, "[");
+    for (int i = 0; i < 10; i++) {
+        if (i < filled) fprintf(stream, "#");
+        else fprintf(stream, ".");
+    }
+    fprintf(stream, "]");
+}
+
+void print_report(FILE *stream, const char *student_name, const Subject *subjects, int count, double avg, int use_colors) {
+    const char *header_color = use_colors ? COLOR_CYAN : "";
+    const char *bold_color   = use_colors ? COLOR_BOLD : "";
+    const char *name_color   = use_colors ? COLOR_YELLOW : "";
+    const char *reset_color  = use_colors ? COLOR_RESET : "";
+
+    fprintf(stream, "\n%s==================================================================%s\n", header_color, reset_color);
+    fprintf(stream, "%s                   STUDENT GRADE CALCULATOR                       %s\n", header_color, reset_color);
+    fprintf(stream, "%s==================================================================%s\n", header_color, reset_color);
+    fprintf(stream, " Student Name:   %s%s%s\n", name_color, student_name, reset_color);
+    fprintf(stream, " Total Subjects: %d\n", count);
+    fprintf(stream, "------------------------------------------------------------------\n");
+    fprintf(stream, " %-20s | %-8s | %-7s | %-12s\n", "Subject Name", "Score", "Grade", "Progress");
+    fprintf(stream, "------------------------------------------------------------------\n");
+
+    for (int i = 0; i < count; i++) {
+        const char *grade_color = reset_color;
+        if (use_colors) {
+            grade_color = (subjects[i].grade >= 3) ? COLOR_GREEN : COLOR_RED;
+        }
+
+
+        fprintf(stream, " %-20s | %3d%%     | ", subjects[i].name, subjects[i].score);
+
+
+        fprintf(stream, "%s%d%s       | ", grade_color, subjects[i].grade, reset_color);
+
+        
+        print_score_bar(stream, subjects[i].score);
+        fprintf(stream, "\n");
+    }
+
+    fprintf(stream, "==================================================================\n");
+    fprintf(stream, " OVERALL AVERAGE GRADE: %s%.2f / 5.00%s\n", name_color, avg, reset_color);
+    fprintf(stream, " PERFORMANCE STATUS:   %s%s%s\n", bold_color, get_performance_status(avg), reset_color);
+    fprintf(stream, "==================================================================\n");
 }
